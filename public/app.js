@@ -13,11 +13,11 @@ socket.addEventListener("message", (event) => {
     const message = JSON.parse(event.data);
 
     if (message.type === "chat") {
-        addMessage(`${message.username}: ${message.text}`);
+        addMessage(`${message.username}: ${message.text}`, message.time);
     }
 
     if (message.type === "system") {
-        addMessage(message.text);
+        addMessage(message.text, message.time);
     }
 });
 
@@ -37,8 +37,19 @@ form.addEventListener("submit", (event) => {
     input.focus();
 });
 
-function addMessage(text) {
+function addMessage(text, time) {
     const li = document.createElement("li");
-    li.textContent = text;
+    const formattedTime = formatTime(time);
+    li.textContent = `[${formattedTime}] ${text}`;
     messages.appendChild(li);
+}
+
+function formatTime(time) {
+    const date = new Date(time);
+
+    return date.toLocaleDateString("zh-CN", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+    });
 }

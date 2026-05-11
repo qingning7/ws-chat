@@ -16,7 +16,8 @@ wss.on("connection", (ws) => {
 
     ws.send(JSON.stringify({
         type: "system",
-        text: "Welcome!"
+        text: "Welcome!",
+        time: new Date().toISOString()
     }));
 
     ws.on("message", (data) => {
@@ -27,7 +28,8 @@ wss.on("connection", (ws) => {
         const payload = JSON.stringify({
             type: "chat",
             username: message.username,
-            text: message.text
+            text: message.text,
+            time: new Date().toISOString()
         });
 
         console.log("Received message:", message);
