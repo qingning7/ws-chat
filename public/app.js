@@ -77,7 +77,7 @@ function saveChatHistory(message) {
     history.push({
         type: "chat",
         username: message.username,
-        text: message.test,
+        text: message.text,
         time: message.time
     });
 
