@@ -1,6 +1,7 @@
 const form = document.getElementById("chat-form");
 const input = document.getElementById("message-input");
 const messages = document.getElementById("messages");
+const username = prompt("Enter your username:") || "Anonymous";
 
 const socket = new WebSocket(`ws://${location.host}`);
 
@@ -9,7 +10,15 @@ socket.addEventListener("open", () => {
 });
 
 socket.addEventListener("message", (event) => {
-    addMessage(event.data);
+    const message = JSON.parse(event.data);
+
+    if (message.type === "chat") {
+        addMessage(`${message.username}: ${message.text}`);
+    }
+
+    if (message.type === "system") {
+        addMessage(message.text);
+    }
 });
 
 form.addEventListener("submit", (event) => {
@@ -18,7 +27,11 @@ form.addEventListener("submit", (event) => {
     const text = input.value.trim();
     if (!text) return;
 
-    socket.send(text);
+    socket.send(JSON.stringify({
+        type: "chat",
+        username,
+        text
+    }));
 
     input.value = "";
     input.focus();
