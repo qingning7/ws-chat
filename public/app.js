@@ -6,7 +6,7 @@ const username = prompt("Enter your username:") || "Anonymous";
 const socket = new WebSocket(`ws://${location.host}`);
 
 socket.addEventListener("open", () => {
-    addMessage("Connected to the server");
+    addMessage("Connected to the server", new Date().toISOString());
 });
 
 socket.addEventListener("message", (event) => {
