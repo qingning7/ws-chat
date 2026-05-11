@@ -1,6 +1,7 @@
 const form = document.getElementById("chat-form");
 const input = document.getElementById("message-input");
 const messages = document.getElementById("messages");
+const onlineCount = document.getElementById("online-count");
 const username = prompt("Enter your username:") || "Anonymous";
 
 const socket = new WebSocket(`ws://${location.host}`);
@@ -18,6 +19,10 @@ socket.addEventListener("message", (event) => {
 
     if (message.type === "system") {
         addMessage(message.text, message.time);
+    }
+
+    if (message.type === "onlineCount") {
+        onlineCount.textContent = `Online Users: ${message.count}`;
     }
 });
 

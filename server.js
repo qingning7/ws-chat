@@ -9,6 +9,31 @@ const wss = new WebSocket.Server({ server });
 
 const PORT = 3000;
 
+function getOnlineCount() {
+    let count = 0;
+
+    wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+            count++;
+        }
+    });
+
+    return count;
+}
+
+function broadcastOnlineCount() {
+    const payload = JSON.stringify({
+        type: "onlineCount",
+        count: getOnlineCount()
+    });
+
+    wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(payload);
+        }
+    });
+}
+
 app.use(express.static('public'));
 
 wss.on("connection", (ws) => {
@@ -19,6 +44,7 @@ wss.on("connection", (ws) => {
         text: "Welcome!",
         time: new Date().toISOString()
     }));
+    broadcastOnlineCount();
 
     ws.on("message", (data) => {
         const message = JSON.parse(data.toString());
@@ -43,6 +69,7 @@ wss.on("connection", (ws) => {
 
     ws.on("close", () => {
         console.log("Client disconnected");
+        broadcastOnlineCount();
     });
 });
 
