@@ -26,7 +26,7 @@ socket.addEventListener("message", (event) => {
     }
 
     if (message.type === "onlineCount") {
-        onlineCount.textContent = `Online Users: ${message.count}`;
+        onlineCount.textContent = `${message.count}`;
     }
 });
 
