@@ -2,7 +2,10 @@ const form = document.getElementById("chat-form");
 const input = document.getElementById("message-input");
 const messages = document.getElementById("messages");
 const onlineCount = document.getElementById("online-count");
+const STORAGE_KEY = "ws-chat-history";
 const username = prompt("Enter your username:") || "Anonymous";
+
+loadHistory();
 
 const socket = new WebSocket(`ws://${location.host}`);
 
@@ -15,6 +18,7 @@ socket.addEventListener("message", (event) => {
 
     if (message.type === "chat") {
         addMessage(`${message.username}: ${message.text}`, message.time);
+        saveChatHistory(message);
     }
 
     if (message.type === "system") {
@@ -57,4 +61,43 @@ function formatTime(time) {
         minute: "2-digit",
         hour12: false
     });
+}
+
+function loadHistory() {
+    const history = getStoredHistory();
+
+    history.forEach((message) => {
+        addMessage(`${message.username}: ${message.text}`, message.time);
+    });
+}
+
+function saveChatHistory(message) {
+    const history = getStoredHistory();
+
+    history.push({
+        type: "chat",
+        username: message.username,
+        text: message.test,
+        time: message.time
+    });
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+}
+
+function getStoredHistory() {
+    const rawHistory = localStorage.getItem(STORAGE_KEY);
+
+    if (!rawHistory) return [];
+
+    try {
+        const history = JSON.parse(rawHistory);
+
+        if (Array.isArray(history)) {
+            return history;
+        }
+
+        return [];
+    } catch (error) {
+        return [];
+    }
 }
