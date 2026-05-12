@@ -7,10 +7,14 @@ const username = prompt("Enter your username:") || "Anonymous";
 
 loadHistory();
 
-const socket = new WebSocket(`ws://${location.host}`);
+const wsProtocol = location.protocol === "https:" ? "wss:" : "ws:";
+const socket = new WebSocket(`${wsProtocol}//${location.host}`);
 
 socket.addEventListener("open", () => {
-    addMessage("Connected to the server", new Date().toISOString());
+    socket.send(JSON.stringify({
+        type: "join",
+        username
+    }));
 });
 
 socket.addEventListener("message", (event) => {

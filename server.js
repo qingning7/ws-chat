@@ -34,6 +34,20 @@ function broadcastOnlineCount() {
     });
 }
 
+function broadcastSystemMessage(text) {
+    const payload = JSON.stringify({
+        type: "system",
+        text,
+        time: new Date().toISOString()
+    });
+
+    wss.clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(payload);
+        }
+    });
+}
+
 app.use(express.static('public'));
 
 wss.on("connection", (ws) => {
@@ -49,6 +63,12 @@ wss.on("connection", (ws) => {
     ws.on("message", (data) => {
         const message = JSON.parse(data.toString());
 
+        if (message.type === "join") {
+            ws.username = message.username || "Anonymous";
+            broadcastSystemMessage(`${ws.username} 进入了聊天`);
+            return;
+        }
+        
         if (message.type !== "chat") return;
 
         const payload = JSON.stringify({
@@ -69,6 +89,11 @@ wss.on("connection", (ws) => {
 
     ws.on("close", () => {
         console.log("Client disconnected");
+
+        if (ws.username) {
+            broadcastSystemMessage(`${ws.username} 离开了聊天`);
+        }
+
         broadcastOnlineCount();
     });
 });
