@@ -26,7 +26,7 @@ socket.addEventListener("message", (event) => {
     }
 
     if (message.type === "system") {
-        addSystemMessage(message.text, message.time);
+        addSystemMessage(message.text, message.time, message.kind);
     }
 
     if (message.type === "onlineCount") {
@@ -70,7 +70,7 @@ function addChatMessage(username, text, time) {
     messages.appendChild(li);
 }
 
-function addSystemMessage(text, time) {
+function addSystemMessage(text, time, kind) {
     const li = document.createElement("li");
     li.className = "message";
 
