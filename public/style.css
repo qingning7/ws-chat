@@ -3,3 +3,31 @@
     padding: 0;
     margin: 0;
 }
+
+.message {
+    margin: 4px 0;
+    font-family: Consolas, monospace;
+}
+
+.message-time {
+    color: #111;
+}
+
+.message-username {
+    color: #0000ff;
+    font-weight: 600;
+}
+
+.message-text {
+    color: #111;
+}
+
+.system-join {
+    color: #15803d;
+    font-weight: 600;
+}
+
+.system-leave {
+    color: #dc2626;
+    font-weight: 600;
+}

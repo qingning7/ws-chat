@@ -21,12 +21,12 @@ socket.addEventListener("message", (event) => {
     const message = JSON.parse(event.data);
 
     if (message.type === "chat") {
-        addMessage(`${message.username}: ${message.text}`, message.time);
+        addChatMessage(message.username, message.text, message.time);
         saveChatHistory(message);
     }
 
     if (message.type === "system") {
-        addMessage(message.text, message.time);
+        addSystemMessage(message.text, message.time);
     }
 
     if (message.type === "onlineCount") {
@@ -50,10 +50,35 @@ form.addEventListener("submit", (event) => {
     input.focus();
 });
 
-function addMessage(text, time) {
+function addChatMessage(username, text, time) {
     const li = document.createElement("li");
-    const formattedTime = formatTime(time);
-    li.textContent = `[${formattedTime}] ${text}`;
+    li.className = "message";
+
+    const timeSpan = document.createElement("span");
+    timeSpan.className = "message-time";
+    timeSpan.textContent = `[${formatTime(time)}] `;
+
+    const usernameSpan = document.createElement("span");
+    usernameSpan.className = "message-username";
+    usernameSpan.textContent = `${username}: `;
+
+    const textSpan = document.createElement("span");
+    textSpan.className = "message-text";
+    textSpan.textContent = text;
+
+    li.append(timeSpan, usernameSpan, textSpan);
+    messages.appendChild(li);
+}
+
+function addSystemMessage(text, time) {
+    const li = document.createElement("li");
+    li.className = "message";
+
+    const systemSpan = document.createElement("span");
+    systemSpan.className = kind === "leave" ? "system-leave" : "system-join";
+    systemSpan.textContent = `[${formatTime(time)}] 系统：${text}`;
+
+    li.appendChild(systemSpan);
     messages.appendChild(li);
 }
 
@@ -71,7 +96,7 @@ function loadHistory() {
     const history = getStoredHistory();
 
     history.forEach((message) => {
-        addMessage(`${message.username}: ${message.text}`, message.time);
+        addChatMessage(message.username, message.text, message.time);
     });
 }
 

@@ -34,10 +34,11 @@ function broadcastOnlineCount() {
     });
 }
 
-function broadcastSystemMessage(text) {
+function broadcastSystemMessage(text, kind) {
     const payload = JSON.stringify({
         type: "system",
         text,
+        kind,
         time: new Date().toISOString()
     });
 
@@ -56,6 +57,7 @@ wss.on("connection", (ws) => {
     ws.send(JSON.stringify({
         type: "system",
         text: "Welcome!",
+        kind: "default",
         time: new Date().toISOString()
     }));
     broadcastOnlineCount();
@@ -65,7 +67,7 @@ wss.on("connection", (ws) => {
 
         if (message.type === "join") {
             ws.username = message.username || "Anonymous";
-            broadcastSystemMessage(`${ws.username} 进入了聊天`);
+            broadcastSystemMessage(`${ws.username} 进入了聊天`, "join");
             return;
         }
         
@@ -91,7 +93,7 @@ wss.on("connection", (ws) => {
         console.log("Client disconnected");
 
         if (ws.username) {
-            broadcastSystemMessage(`${ws.username} 离开了聊天`);
+            broadcastSystemMessage(`${ws.username} 离开了聊天`, "leave");
         }
 
         broadcastOnlineCount();
